@@ -29,15 +29,18 @@ int main(int argc, char** argv)
             boost::system::error_code ignored_error;
 
             byte msg[49] = {/*data type */1,
-                          /* dataTag */ 104 ,101 ,108 ,108 ,111, 32, 119, 111, 114 ,108, 100,0,0,0,0,0,0,0,0,0,
-                          /* dataUnits */104 ,101 ,108 ,108 ,111, 32, 119, 111, 114 ,108, 100,0,0,0,0,0,0,0,0,0,
-                          /* data*/0,0,0,0,0,0,0,2 };
+                    /* dataTag */ 104 ,101 ,108 ,108 ,111, 32, 119, 111, 114 ,108, 100,0,0,0,0,0,0,0,0,0,
+                    /* dataUnits */104 ,101 ,108 ,108 ,111, 32, 119, 111, 114 ,108, 100,0,0,0,0,0,0,0,0,0,
+                    /* data*/0,0,0,0,0,0,0,2 };
 
             while (true)
             {
                 ros::Duration(1).sleep();
                 // writing the message for current time
                 boost::asio::write(socket, boost::asio::buffer(msg, 49), ignored_error);
+                msg[48]++;
+                if (msg[48] >= 120)
+                    msg[48] = 0;
 
             }
 

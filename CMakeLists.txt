@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
         )
 
 ## System dependencies are found with CMake's conventions
-find_package(Boost REQUIRED COMPONENTS system)
+#find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -121,7 +121,10 @@ include_directories(
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
         src/robonette_server_node.cpp
-        )
+        src/tcp_server.cpp
+
+        include/tcp_server.h
+        src/manager.cpp include/manager.h include/protocol/InfoMsg.h)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -131,7 +134,13 @@ add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/robonette_server_node.cpp)
+add_executable(${PROJECT_NAME}_node
+        src/robonette_server_node.cpp
+        src/tcp_server.cpp
+
+        include/tcp_server.h
+
+        src/manager.cpp include/manager.h include/protocol/InfoMsg.h)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

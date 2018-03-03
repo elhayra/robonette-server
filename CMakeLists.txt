@@ -124,7 +124,16 @@ add_library(${PROJECT_NAME}
         src/tcp_server.cpp
 
         include/tcp_server.h
-        src/manager.cpp include/manager.h include/protocol/InfoMsg.h)
+        src/manager.cpp
+        include/manager.h
+        include/protocol/InfoMsg.h
+        include/protocol/cell_types/byte_cell.h
+        include/protocol/cell_types/string_cell.h
+        include/protocol/cell_types/float32_cell.h
+        include/protocol/cell_types/float64_cell.h
+        include/protocol/cell_types/bool_cell.h
+        include/protocol/cell_types/int32_cell.h
+        include/protocol/cell_types/packet_cell.h)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -140,7 +149,14 @@ add_executable(${PROJECT_NAME}_node
 
         include/tcp_server.h
 
-        src/manager.cpp include/manager.h include/protocol/InfoMsg.h)
+        src/manager.cpp include/manager.h
+        include/protocol/InfoMsg.h
+        include/protocol/cell_types/byte_cell.h
+        include/protocol/cell_types/string_cell.h
+        include/protocol/cell_types/float32_cell.h
+        include/protocol/cell_types/float64_cell.h
+        include/protocol/cell_types/int32_cell.h
+        include/protocol/cell_types/packet_cell.h)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

@@ -1,45 +1,66 @@
 
-#include <manager.h>
+#include <robonette/manager.h>
 
-void Manager::loop()
+namespace rbnt
 {
-   byte msg1[49] = {
-            /* data type */ 1,
-            /* dataTag */ 104 ,101 ,108 ,108 ,111, 32, 119, 111, 114 ,108, 100,0,0,0,0,0,0,0,0,0,
-            /* dataUnits */ 104 ,101 ,108 ,108 ,111, 32, 119, 111, 114 ,108, 100,0,0,0,0,0,0,0,0,0,
-            /* data */ 0,0,0,0,0,0,0,2
-   };
+    /* test msg */
+    /*byte msg1[49] = {
+              data type  1,
+              dataTag  104 ,101 ,108 ,108 ,111, 32, 119, 111, 114 ,108, 100,0,0,0,0,0,0,0,0,0,
+              dataUnits  104 ,101 ,108 ,108 ,111, 32, 119, 111, 114 ,108, 100,0,0,0,0,0,0,0,0,0,
+              data  0,0,0,0,0,0,0,2
+    };*/
 
-    InfoMsg msg;
-    msg.setDataType(InfoMsg::DataType::INT32);
-    msg.setDataTag("Battery");
-    msg.setDataUnits("%");
-    msg.setDataInt32(-60);
-    byte msg_bytes[InfoMsg::SIZE];
-    msg.toBytes(msg_bytes, InfoMsg::SIZE);
+    void Manager::loop()
+    {
+        //TODO: get bytes from client (commands)
+    }
 
-    int n = server_.writeBytes(msg_bytes, InfoMsg::SIZE);
+    bool Manager::sendInfoMsg(const InfoMsg& msg)
+    {
+        byte msg_bytes[InfoMsg::SIZE];
+        msg.toBytes(msg_bytes, InfoMsg::SIZE);
 
-}
+        /* send msg */
+        int bytes_sent = server_.writeBytes(msg_bytes, InfoMsg::SIZE);
+        if (bytes_sent == InfoMsg::SIZE)
+            return true;
+        return false;
+    }
 
-bool Manager::startServer()
-{
-    /*InfoMsg msg;
-    msg.setDataType(InfoMsg::DataType::INT32);
-    msg.setDataTag("Battery");
-    msg.setDataUnits("%");
-    msg.setDataInt32(-60);
-    byte msg_bytes[InfoMsg::SIZE];
-    msg.toBytes(msg_bytes, InfoMsg::SIZE);
+    bool Manager::writeInfo(std::string tag,
+                            int32_t data,
+                            std::string units)
+    {
+        InfoMsg msg;
+        msg.setDataType(InfoMsg::DataType::INT32);
+        msg.setDataTag(tag);
+        msg.setDataUnits(units);
+        msg.setDataInt32(data);
+        sendInfoMsg(msg);
+    }
 
-    server_.writeBytes(msg_bytes, InfoMsg::SIZE);*/
+    bool Manager::writeInfo(std::string tag,
+                            float data,
+                            std::string units)
+    {
+        InfoMsg msg;
+        msg.setDataType(InfoMsg::DataType::FLOAT32);
+        msg.setDataTag(tag);
+        msg.setDataUnits(units);
+        msg.setDataFloat32(data);
+        sendInfoMsg(msg);
+    }
 
-    server_.bindTo(5005);
-    server_.startListen();
-    return true;
-}
+    bool Manager::startServer()
+    {
+        server_.bindTo(5005);
+        server_.startListen();
+        return true;
+    }
 
-void Manager::waitForClient()
-{
-    server_.acceptClient();
+    void Manager::waitForClient()
+    {
+        server_.acceptClient();
+    }
 }

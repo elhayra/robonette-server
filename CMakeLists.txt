@@ -135,6 +135,7 @@ set(
         include/robonette/protocol/cell_types/float64_cell.h
         include/robonette/protocol/cell_types/bool_cell.h
         include/robonette/protocol/cell_types/int32_cell.h
+        include/robonette/protocol/cell_types/uint32_cell.h
         include/robonette/protocol/cell_types/packet_cell.h
         include/robonette/protocol/messages/info_msg.h
         include/robonette/protocol/messages/rbnt_msg.h

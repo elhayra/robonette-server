@@ -11,7 +11,7 @@
 
 namespace rbnt
 {
-    using byte = unsigned char;
+    using byte = uint8_t;
 
     class TcpServer
     {
@@ -25,7 +25,7 @@ namespace rbnt
         bool bindTo(int port);
         void startListen();
         bool acceptClient();
-        int writeBytes(byte bytes[], size_t size) const;
+        int writeBytes(const byte bytes[], size_t size) const;
         int  readBytes(byte bytes[], size_t size) const;
         void closeServer();
 

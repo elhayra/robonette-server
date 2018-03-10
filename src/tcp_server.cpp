@@ -41,7 +41,7 @@ namespace rbnt
         return read(newsockfd_, bytes, size);
     }
 
-    int TcpServer::writeBytes(byte bytes[], size_t size) const
+    int TcpServer::writeBytes(const byte bytes[], size_t size) const
     {
         return send(newsockfd_, bytes, size, 0);
     }

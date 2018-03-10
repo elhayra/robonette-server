@@ -31,7 +31,7 @@ namespace rbnt
     public:
 
         static const int DATA_SIZE = 8;
-        static const int SIZE = 50;
+        static const int SIZE = 50 + RbntMsg::SIZE;
         static const int INDX_DATA_TYPE = INDX_MSG_TYPE + ByteCell::SIZE;
         static const int INDX_DATA_TAG = INDX_DATA_TYPE + ByteCell::SIZE;
         static const int INDX_DATA_UNITS = INDX_DATA_TAG + StringCell::SIZE;

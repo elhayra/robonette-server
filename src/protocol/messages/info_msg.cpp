@@ -21,6 +21,7 @@ namespace rbnt
         for (int i=0; i<SIZE; i++)
             bytes[i] = 0;
 
+        msg_type_.toBytes(bytes, INDX_MSG_TYPE);
         type_.toBytes(bytes, INDX_DATA_TYPE);
         tag_.toBytes(bytes, INDX_DATA_TAG);
         units_.toBytes(bytes, INDX_DATA_UNITS);

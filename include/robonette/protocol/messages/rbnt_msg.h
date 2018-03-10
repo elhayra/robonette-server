@@ -12,7 +12,7 @@ namespace rbnt
     {
 
     protected:
-        ByteCell msg_type;
+        ByteCell msg_type_;
 
     public:
         enum class MsgType
@@ -23,10 +23,11 @@ namespace rbnt
             COMMAND = 4
         };
 
+        static const int SIZE = 1;
         static const uint8_t INDX_MSG_TYPE = 0;
         virtual bool toBytes(byte bytes[], size_t size) const = 0;
 
-        RbntMsg() : msg_type(INDX_MSG_TYPE) {};
+        RbntMsg() : msg_type_(INDX_MSG_TYPE) {};
 
     };
 }

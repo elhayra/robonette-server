@@ -14,8 +14,7 @@ namespace rbnt
     {
     private:
         TcpServer server_;
-        bool sendInfoMsg(const InfoMsg& msg) const;
-        bool sendImgMsg(const ImgMsg& msg) const;
+        bool sendBytes(const byte bytes[], size_t size) const;
 
     public:
         bool startServer();
@@ -30,7 +29,7 @@ namespace rbnt
         //TODO: create writeInfo for all data types
 
         bool writeImg(std::string tag,
-                      const sensor_msgs::Image::ConstPtr &msg) const;
+                      const sensor_msgs::Image::ConstPtr &img_msg) const;
 
         void closeServer();
         void loop();

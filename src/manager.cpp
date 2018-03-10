@@ -16,27 +16,29 @@ namespace rbnt
         //TODO: get bytes from client (commands)
     }
 
-    bool Manager::sendInfoMsg(const InfoMsg& msg) const
+    bool Manager::sendBytes(const byte bytes[], size_t size) const
     {
-        byte msg_bytes[InfoMsg::SIZE];
-        msg.toBytes(msg_bytes, InfoMsg::SIZE);
-
-        /* send msg */
-        int bytes_sent = server_.writeBytes(msg_bytes, InfoMsg::SIZE);
-        if (bytes_sent == InfoMsg::SIZE)
+        int bytes_sent = server_.writeBytes(bytes, size);
+        if (bytes_sent == size)
             return true;
         return false;
     }
 
-    bool Manager::sendImgMsg(const ImgMsg &msg) const
-    {
-
-    }
-
     bool Manager::writeImg(std::string tag,
-                           const sensor_msgs::Image::ConstPtr &msg) const
+                           const sensor_msgs::Image::ConstPtr &img_msg) const
     {
+        ImgMsg msg;
+        msg.setTag(tag);
+        msg.setEncoding(img_msg->encoding);
+        msg.setHeight(img_msg->height);
+        msg.setWidth(img_msg->width);
+        msg.setStep(img_msg->step);
+        msg.isBigEndian(img_msg->is_bigendian);
+        msg.setData(img_msg->data);
 
+        byte msg_bytes[ImgMsg::SIZE];
+        msg.toBytes(msg_bytes, ImgMsg::SIZE);
+        return sendBytes(msg_bytes, ImgMsg::SIZE);
     }
 
     bool Manager::writeInfo(std::string tag,
@@ -48,7 +50,10 @@ namespace rbnt
         msg.setDataTag(tag);
         msg.setDataUnits(units);
         msg.setDataInt32(data);
-        sendInfoMsg(msg);
+
+        byte msg_bytes[InfoMsg::SIZE];
+        msg.toBytes(msg_bytes, InfoMsg::SIZE);
+        return sendBytes(msg_bytes, InfoMsg::SIZE);
     }
 
     bool Manager::writeInfo(std::string tag,
@@ -60,7 +65,10 @@ namespace rbnt
         msg.setDataTag(tag);
         msg.setDataUnits(units);
         msg.setDataFloat32(data);
-        sendInfoMsg(msg);
+
+        byte msg_bytes[InfoMsg::SIZE];
+        msg.toBytes(msg_bytes, InfoMsg::SIZE);
+        return sendBytes(msg_bytes, InfoMsg::SIZE);
     }
 
     bool Manager::startServer()

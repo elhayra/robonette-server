@@ -25,8 +25,8 @@ namespace rbnt
         bool bindTo(int port);
         void startListen();
         bool acceptClient();
-        int writeBytes(byte bytes[], size_t size);
-        int  readBytes(byte bytes[], size_t size);
+        int writeBytes(byte bytes[], size_t size) const;
+        int  readBytes(byte bytes[], size_t size) const;
         void closeServer();
 
     };

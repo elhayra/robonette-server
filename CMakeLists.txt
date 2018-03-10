@@ -118,22 +118,31 @@ include_directories(
         ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-add_library(${PROJECT_NAME}
+set(
+        PROJECT_FILES
+
         src/robonette_node.cpp
         src/tcp_server.cpp
+        src/manager.cpp
+        src/protocol/messages/info_msg.cpp
+        src/protocol/messages/img_msg.cpp
 
         include/robonette/tcp_server.h
-        src/manager.cpp
         include/robonette/manager.h
-        include/robonette/protocol/InfoMsg.h
         include/robonette/protocol/cell_types/byte_cell.h
         include/robonette/protocol/cell_types/string_cell.h
         include/robonette/protocol/cell_types/float32_cell.h
         include/robonette/protocol/cell_types/float64_cell.h
         include/robonette/protocol/cell_types/bool_cell.h
         include/robonette/protocol/cell_types/int32_cell.h
-        include/robonette/protocol/cell_types/packet_cell.h)
+        include/robonette/protocol/cell_types/packet_cell.h
+        include/robonette/protocol/messages/info_msg.h
+        include/robonette/protocol/messages/rbnt_msg.h
+        include/robonette/protocol/messages/img_msg.h
+)
+
+## Declare a C++ library
+add_library(${PROJECT_NAME} ${PROJECT_FILES})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -145,18 +154,7 @@ add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node
         src/robonette_node.cpp
-        src/tcp_server.cpp
-
-        include/robonette/tcp_server.h
-
-        src/manager.cpp include/robonette/manager.h
-        include/robonette/protocol/InfoMsg.h
-        include/robonette/protocol/cell_types/byte_cell.h
-        include/robonette/protocol/cell_types/string_cell.h
-        include/robonette/protocol/cell_types/float32_cell.h
-        include/robonette/protocol/cell_types/float64_cell.h
-        include/robonette/protocol/cell_types/int32_cell.h
-        include/robonette/protocol/cell_types/packet_cell.h)
+        ${PROJECT_FILES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

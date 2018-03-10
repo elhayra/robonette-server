@@ -13,8 +13,8 @@ namespace rbnt
         int index_;
     public:
         PacketCell(int index) { index_ = index; }
-        int getIndex() { return index_; }
-        virtual bool fromBytes(byte bytes[], size_t size) = 0;
+        int getIndex() const { return index_; }
+        virtual bool fromBytes(const byte bytes[], size_t size) = 0;
 
     };
 }

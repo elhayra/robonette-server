@@ -3,8 +3,8 @@
 #ifndef ROBONETTE_SERVER_STRINGCELL_H
 #define ROBONETTE_SERVER_STRINGCELL_H
 
-#include "packet_cell.h"
 #include <iostream>
+#include <robonette/protocol/cell_types/packet_cell.h>
 
 namespace rbnt
 {
@@ -16,7 +16,7 @@ namespace rbnt
         static const int SIZE = 20;
         StringCell(int index, std::string value) : PacketCell(index) { setValue(value); }
         StringCell(int index) : PacketCell(index) {}
-        bool fromBytes(byte bytes[], size_t size)
+        bool fromBytes(const byte bytes[], size_t size)
         {
             if (size < getIndex() + SIZE)
                 return false;
@@ -31,8 +31,7 @@ namespace rbnt
                 bytes[i + from_index] = bytes_arr[i];
         };
 
-        void setValue(std::string value) { value_ = value; }
-
+        void setValue(const std::string& value) { value_ = value; }
     };
 }
 

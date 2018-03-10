@@ -3,7 +3,8 @@
 #ifndef ROBONETTE_SERVER_FLOAT64_CELL_H
 #define ROBONETTE_SERVER_FLOAT64_CELL_H
 
-#include "packet_cell.h"
+#include <robonette/protocol/cell_types/packet_cell.h>
+
 
 namespace rbnt
 {
@@ -15,7 +16,7 @@ namespace rbnt
         static const int SIZE = 8;
         Float64Cell(int index, double value) : PacketCell(index) { setValue(value); }
         Float64Cell(int index) : PacketCell(index) {}
-        bool fromBytes(byte bytes[], size_t size)
+        bool fromBytes(const byte bytes[], size_t size)
         {
             if (size < getIndex() + SIZE)
                 return false;

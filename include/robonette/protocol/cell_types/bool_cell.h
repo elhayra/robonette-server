@@ -2,7 +2,7 @@
 #ifndef ROBONETTE_SERVER_BOOL_CELL_H
 #define ROBONETTE_SERVER_BOOL_CELL_H
 
-#include "packet_cell.h"
+#include <robonette/protocol/cell_types/packet_cell.h>
 
 namespace rbnt
 {
@@ -14,7 +14,7 @@ namespace rbnt
         static const int SIZE = 1;
         BoolCell(int index, bool value) : PacketCell(index) { setValue(value); }
         BoolCell(int index) : PacketCell(index) {}
-        bool fromBytes(byte bytes[], size_t size)
+        bool fromBytes(const byte bytes[], size_t size)
         {
             if (size < getIndex() + SIZE)
                 return false;
@@ -25,7 +25,7 @@ namespace rbnt
         {
             bytes[from_index] = value_;
         };
-        void setValue(bool value) { value_ = value; }
+        void setValue(const bool &value) { value_ = value; }
 
     };
 }

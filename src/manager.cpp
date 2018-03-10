@@ -16,7 +16,7 @@ namespace rbnt
         //TODO: get bytes from client (commands)
     }
 
-    bool Manager::sendInfoMsg(const InfoMsg& msg)
+    bool Manager::sendInfoMsg(const InfoMsg& msg) const
     {
         byte msg_bytes[InfoMsg::SIZE];
         msg.toBytes(msg_bytes, InfoMsg::SIZE);
@@ -28,9 +28,20 @@ namespace rbnt
         return false;
     }
 
+    bool Manager::sendImgMsg(const ImgMsg &msg) const
+    {
+
+    }
+
+    bool Manager::writeImg(std::string tag,
+                           const sensor_msgs::Image::ConstPtr &msg) const
+    {
+
+    }
+
     bool Manager::writeInfo(std::string tag,
                             int32_t data,
-                            std::string units)
+                            std::string units) const
     {
         InfoMsg msg;
         msg.setDataType(InfoMsg::DataType::INT32);
@@ -42,7 +53,7 @@ namespace rbnt
 
     bool Manager::writeInfo(std::string tag,
                             float data,
-                            std::string units)
+                            std::string units) const
     {
         InfoMsg msg;
         msg.setDataType(InfoMsg::DataType::FLOAT32);

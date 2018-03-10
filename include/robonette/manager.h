@@ -3,7 +3,9 @@
 #define ROBONETTE_SERVER_COMM_MANAGER_H
 
 #include <robonette/tcp_server.h>
-#include <robonette/protocol/InfoMsg.h>
+#include <robonette/protocol/messages/info_msg.h>
+#include <robonette/protocol/messages/img_msg.h>
+#include <sensor_msgs/Image.h>
 #include <iostream>
 
 namespace rbnt
@@ -12,7 +14,8 @@ namespace rbnt
     {
     private:
         TcpServer server_;
-        bool sendInfoMsg(const InfoMsg& msg);
+        bool sendInfoMsg(const InfoMsg& msg) const;
+        bool sendImgMsg(const ImgMsg& msg) const;
 
     public:
         bool startServer();
@@ -20,11 +23,14 @@ namespace rbnt
 
         bool writeInfo(std::string tag,
                        int32_t data,
-                       std::string units);
+                       std::string units) const;
         bool writeInfo(std::string tag,
                        float data,
-                       std::string units);
+                       std::string units) const;
         //TODO: create writeInfo for all data types
+
+        bool writeImg(std::string tag,
+                      const sensor_msgs::Image::ConstPtr &msg) const;
 
         void closeServer();
         void loop();

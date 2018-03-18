@@ -24,11 +24,11 @@ namespace rbnt
             return true;
         }
 
-        void toBytes(byte bytes[], int from_index) const
+        void toBytes(byte bytes[]) const
         {
             byte *bytes_arr = (byte *)& value_;
             for (int i=0; i<SIZE; i++)
-                bytes[i + from_index] = bytes_arr[i];
+                bytes[i + getIndex()] = bytes_arr[i];
         };
 
         void setValue(double value) { value_ = value; }

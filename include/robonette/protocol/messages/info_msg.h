@@ -31,8 +31,9 @@ namespace rbnt
     public:
 
         static const int DATA_SIZE = 8;
-        static const int SIZE = 50 + RbntMsg::SIZE;
-        static const int INDX_DATA_TYPE = INDX_MSG_TYPE + ByteCell::SIZE;
+        static const int SIZE = ByteCell::SIZE + (StringCell::SIZE * 2) + DATA_SIZE;
+
+        static const int INDX_DATA_TYPE = 0;
         static const int INDX_DATA_TAG = INDX_DATA_TYPE + ByteCell::SIZE;
         static const int INDX_DATA_UNITS = INDX_DATA_TAG + StringCell::SIZE;
         static const int INDX_DATA = INDX_DATA_UNITS + StringCell::SIZE;
@@ -62,7 +63,7 @@ namespace rbnt
         void setDataBool(const bool &value) { data_bool_.setValue(value); }
         void setDataString(const std::string &value) { data_string_.setValue(value); }
 
-        bool toBytes(byte bytes[], size_t size) const;
+        bool toBytes(byte bytes[], size_t size);
         DataType byteToDataType(byte byte_in) const;
     };
 }

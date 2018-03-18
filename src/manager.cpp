@@ -27,6 +27,18 @@ namespace rbnt
     bool Manager::writeImg(std::string tag,
                            const sensor_msgs::Image::ConstPtr &img_msg) const
     {
+        const size_t msg_size = ImgMsg::FIELDS_SIZE +
+                (img_msg->step * img_msg->height);
+
+        RbntHeader header;
+        header.setHeaderStart(RbntHeader::VALID_HEADER_START);
+        header.setMsgType(RbntHeader::MsgType::IMAGE);
+        header.setMsgSize(msg_size);
+
+        byte header_bytes[RbntHeader::SIZE];
+        header.toBytes(header_bytes, RbntHeader::SIZE);
+        sendBytes(header_bytes, RbntHeader::SIZE);
+
         ImgMsg msg;
         msg.setTag(tag);
         msg.setEncoding(img_msg->encoding);
@@ -36,15 +48,24 @@ namespace rbnt
         msg.isBigEndian(img_msg->is_bigendian);
         msg.setData(img_msg->data);
 
-        byte msg_bytes[ImgMsg::SIZE];
-        msg.toBytes(msg_bytes, ImgMsg::SIZE);
-        return sendBytes(msg_bytes, ImgMsg::SIZE);
+        byte msg_bytes[msg_size];
+        msg.toBytes(msg_bytes, msg_size);
+        return sendBytes(msg_bytes, msg_size);
     }
 
     bool Manager::writeInfo(std::string tag,
                             int32_t data,
                             std::string units) const
     {
+        RbntHeader header;
+        header.setHeaderStart(RbntHeader::VALID_HEADER_START);
+        header.setMsgType(RbntHeader::MsgType::INFO);
+        header.setMsgSize(InfoMsg::SIZE);
+
+        byte header_bytes[RbntHeader::SIZE];
+        header.toBytes(header_bytes, RbntHeader::SIZE);
+        sendBytes(header_bytes, RbntHeader::SIZE);
+
         InfoMsg msg;
         msg.setDataType(InfoMsg::DataType::INT32);
         msg.setDataTag(tag);
@@ -60,6 +81,15 @@ namespace rbnt
                             float data,
                             std::string units) const
     {
+        RbntHeader header;
+        header.setHeaderStart(RbntHeader::VALID_HEADER_START);
+        header.setMsgType(RbntHeader::MsgType::INFO);
+        header.setMsgSize(InfoMsg::SIZE);
+
+        byte header_bytes[RbntHeader::SIZE];
+        header.toBytes(header_bytes, RbntHeader::SIZE);
+        sendBytes(header_bytes, RbntHeader::SIZE);
+
         InfoMsg msg;
         msg.setDataType(InfoMsg::DataType::FLOAT32);
         msg.setDataTag(tag);

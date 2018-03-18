@@ -3,50 +3,32 @@
 
 namespace rbnt
 {
-    ImgMsg::~ImgMsg()
-    {
-        deleteData();
-    }
+    ImgMsg::ImgMsg() :  tag_(INDX_TAG),
+                        encoding_(INDX_ENCODING),
+                        height_(INDX_HEIGHT),
+                        width_(INDX_WIDTH),
+                        step_(INDX_STEP),
+                        is_bigendian_(INDX_BIGENDIAN){}
 
-    void ImgMsg::setData(const std::vector& data)
-    {
-        const int size = step_.getValue() * height_.getValue();
-        deleteData();
-        data_ = new byte[size];
-        for (int indx = 0; indx < size; indx++)
-            data_[indx] = data[indx];
-    }
 
-    bool ImgMsg::toBytes(byte *bytes, size_t size) const
+    bool ImgMsg::toBytes(byte *bytes, size_t size)
     {
-        const int msg_size = RbntMsg::SIZE +
-                             (StringCell::SIZE * 2) +
-                             (UInt32Cell::SIZE * 3) +
-                             BoolCell::SIZE +
-                             (step_.getValue() * height_.getValue());
-        if (size != msg_size)
+        const size_t my_size = ImgMsg::FIELDS_SIZE +
+                               (step_.getValue() * height_.getValue());
+        if (size != my_size)
             return false;
 
-        msg_type_.toBytes(bytes, INDX_MSG_TYPE);
-        tag_.toBytes(bytes, INDX_TAG);
-        encoding_.toBytes(bytes, INDX_ENCODING);
-        height_.toBytes(bytes, INDX_HEIGHT);
-        width_.toBytes(bytes, INDX_WIDTH);
-        step_.toBytes(bytes, INDX_STEP);
-        is_bigendian_.toBytes(bytes, INDX_BIGENDIAN);
+        tag_.toBytes(bytes);
+        encoding_.toBytes(bytes);
+        height_.toBytes(bytes);
+        width_.toBytes(bytes);
+        step_.toBytes(bytes);
+        is_bigendian_.toBytes(bytes);
 
-        for (int indx = 0; indx < size; indx++)
-            bytes[indx + INDX_DATA] = data_[indx];
+        //TODO: FIX PROBLEM HERE
+        for (int indx = INDX_DATA; indx < size; indx++)
+            bytes[indx] = data_[indx - INDX_DATA];
 
         return true;
-    }
-
-    void ImgMsg::deleteData()
-    {
-        if (data_ != nullptr)
-        {
-            delete [] data_;
-            data_ = nullptr;
-        }
     }
 }

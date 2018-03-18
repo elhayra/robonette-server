@@ -24,11 +24,11 @@ namespace rbnt
             return true;
         }
 
-        void toBytes(byte bytes[], int from_index) const
+        void toBytes(byte bytes[]) const
         {
             char const *bytes_arr = value_.c_str();
             for (int i=0; i<value_.size(); i++)
-                bytes[i + from_index] = bytes_arr[i];
+                bytes[i + getIndex()] = bytes_arr[i];
         };
 
         void setValue(const std::string& value) { value_ = value; }

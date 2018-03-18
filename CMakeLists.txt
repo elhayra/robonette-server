@@ -135,15 +135,15 @@ set(
         include/robonette/protocol/cell_types/float64_cell.h
         include/robonette/protocol/cell_types/bool_cell.h
         include/robonette/protocol/cell_types/int32_cell.h
-        include/robonette/protocol/cell_types/uint32_cell.h
         include/robonette/protocol/cell_types/packet_cell.h
         include/robonette/protocol/messages/info_msg.h
         include/robonette/protocol/messages/rbnt_msg.h
         include/robonette/protocol/messages/img_msg.h
+        include/robonette/protocol/messages/rbnt_header.h
 )
 
 ## Declare a C++ library
-add_library(${PROJECT_NAME} ${PROJECT_FILES})
+add_library(${PROJECT_NAME} ${PROJECT_FILES} )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

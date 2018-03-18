@@ -5,6 +5,7 @@
 #include <robonette/tcp_server.h>
 #include <robonette/protocol/messages/info_msg.h>
 #include <robonette/protocol/messages/img_msg.h>
+#include <robonette/protocol/messages/rbnt_header.h>
 #include <sensor_msgs/Image.h>
 #include <iostream>
 

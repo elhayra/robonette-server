@@ -11,50 +11,50 @@ namespace rbnt
                         data_float64_(INDX_DATA),
                         data_byte_(INDX_DATA),
                         data_bool_(INDX_DATA),
-                        data_string_(INDX_DATA) {}
+                        data_string_(INDX_DATA){}
 
 
-    bool InfoMsg::toBytes(byte bytes[], size_t size) const
+    bool InfoMsg::toBytes(byte bytes[], size_t size)
     {
         if (size != SIZE)
             return false;
         for (int i=0; i<SIZE; i++)
             bytes[i] = 0;
 
-        msg_type_.toBytes(bytes, INDX_MSG_TYPE);
-        type_.toBytes(bytes, INDX_DATA_TYPE);
-        tag_.toBytes(bytes, INDX_DATA_TAG);
-        units_.toBytes(bytes, INDX_DATA_UNITS);
+        type_.toBytes(bytes);
+        tag_.toBytes(bytes);
+        units_.toBytes(bytes);
+
         switch (byteToDataType(type_.getValue()))
         {
             case DataType::INT32:
             {
-                data_int_.toBytes(bytes, INDX_DATA);
+                data_int_.toBytes(bytes);
                 break;
             }
             case DataType::FLOAT32:
             {
-                data_float32_.toBytes(bytes, INDX_DATA);
+                data_float32_.toBytes(bytes);
                 break;
             }
             case DataType::FLOAT64:
             {
-                data_float64_.toBytes(bytes, INDX_DATA);
+                data_float64_.toBytes(bytes);
                 break;
             }
             case DataType::BYTE:
             {
-                data_byte_.toBytes(bytes, INDX_DATA);
+                data_byte_.toBytes(bytes);
                 break;
             }
             case DataType::BOOL:
             {
-                data_bool_.toBytes(bytes, INDX_DATA);
+                data_bool_.toBytes(bytes);
                 break;
             }
             case DataType::STRING:
             {
-                data_string_.toBytes(bytes, INDX_DATA);
+                data_string_.toBytes(bytes);
                 break;
             }
         }

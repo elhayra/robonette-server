@@ -22,9 +22,9 @@ namespace rbnt
             return true;
         }
 
-        void toBytes(byte bytes[], int from_index) const
+        void toBytes(byte bytes[]) const
         {
-            bytes[from_index] = value_;
+            bytes[getIndex()] = value_;
         };
 
         void setValue(const byte& value) { value_ = value; }

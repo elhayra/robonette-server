@@ -16,7 +16,7 @@ void battCB(const sensor_msgs::BatteryState::ConstPtr &msg)
 void urfCB(const sensor_msgs::Range::ConstPtr &msg)
 {
     float sensor_lvl = msg->range;
-    manager.writeInfo("Ultrasonic", sensor_lvl, "meters");
+//    manager.writeInfo("Ultrasonic", sensor_lvl, "meters");
 }
 
 void kinectCB(const sensor_msgs::Image::ConstPtr &msg)
@@ -37,10 +37,10 @@ int main(int argc, char** argv)
 
     ROS_INFO("[robonette_node]: starting server");
 
-    //manager.startServer();
+    manager.startServer();
 
     ROS_INFO("[robonette_node]: waiting for client...");
-    //manager.waitForClient();
+    manager.waitForClient();
 
     ROS_INFO("[robonette_node]: got client");
 

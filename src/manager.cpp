@@ -3,13 +3,6 @@
 
 namespace rbnt
 {
-    /* test msg */
-    /*byte msg1[49] = {
-              data type  1,
-              dataTag  104 ,101 ,108 ,108 ,111, 32, 119, 111, 114 ,108, 100,0,0,0,0,0,0,0,0,0,
-              dataUnits  104 ,101 ,108 ,108 ,111, 32, 119, 111, 114 ,108, 100,0,0,0,0,0,0,0,0,0,
-              data  0,0,0,0,0,0,0,2
-    };*/
 
     void Manager::loop()
     {
@@ -18,10 +11,47 @@ namespace rbnt
 
     bool Manager::sendBytes(const byte bytes[], size_t size) const
     {
-        int bytes_sent = server_.writeBytes(bytes, size);
+        int bytes_sent = 0;
+        while (bytes_sent < size)
+        {
+            int n = server_.writeBytes(bytes + bytes_sent, size - bytes_sent);
+            if (n == -1)
+                break;  // ERROR client disconnected
+
+            bytes_sent += n;
+        }
+
+
+        fprintf(stderr, "sent: %i\n", bytes_sent);
         if (bytes_sent == size)
             return true;
         return false;
+    }
+
+    bool Manager::writeImg(std::string tag,
+                           const sensor_msgs::CompressedImage::ConstPtr &img_msg) const
+    {
+        const size_t msg_size = ImgMsg::FIELDS_SIZE +
+                                (img_msg->data.size());
+
+        RbntHeader header;
+        header.setHeaderStart(RbntHeader::VALID_HEADER_START);
+        header.setMsgType(RbntHeader::MsgType::IMAGE);
+        header.setMsgSize(msg_size);
+
+        byte header_bytes[RbntHeader::SIZE];
+        header.toBytes(header_bytes, RbntHeader::SIZE);
+        sendBytes(header_bytes, RbntHeader::SIZE);
+
+        ImgMsg msg;
+        msg.setTag(tag);
+        msg.setEncoding(img_msg->format);
+        msg.setData(img_msg->data);
+        msg.setHeight(img_msg->data.size());
+
+        byte msg_bytes[msg_size];
+        msg.toBytes(msg_bytes, msg_size);
+        return sendBytes(msg_bytes, msg_size);
     }
 
     bool Manager::writeImg(std::string tag,
@@ -47,6 +77,9 @@ namespace rbnt
         msg.setStep(img_msg->step);
         msg.isBigEndian(img_msg->is_bigendian);
         msg.setData(img_msg->data);
+
+ //       for (int i=0; i<img_msg->step * img_msg->height;i++)
+  //          printf("%i:\n",img_msg->data[i]);
 
         byte msg_bytes[msg_size];
         msg.toBytes(msg_bytes, msg_size);

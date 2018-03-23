@@ -13,8 +13,8 @@ namespace rbnt
 
     bool ImgMsg::toBytes(byte *bytes, size_t size)
     {
-        const size_t my_size = ImgMsg::FIELDS_SIZE +
-                               (step_.getValue() * height_.getValue());
+        const size_t my_size = /*ImgMsg::FIELDS_SIZE +*/ size;
+                               //(step_.getValue() * height_.getValue()); // TODO: RETURN THIS LINE AND DELETE SIZE
         if (size != my_size)
             return false;
 

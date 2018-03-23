@@ -7,6 +7,7 @@
 #include <robonette/protocol/messages/img_msg.h>
 #include <robonette/protocol/messages/rbnt_header.h>
 #include <sensor_msgs/Image.h>
+#include <sensor_msgs/CompressedImage.h>
 #include <iostream>
 
 namespace rbnt
@@ -31,6 +32,8 @@ namespace rbnt
 
         bool writeImg(std::string tag,
                       const sensor_msgs::Image::ConstPtr &img_msg) const;
+        bool writeImg(std::string tag,
+                      const sensor_msgs::CompressedImage::ConstPtr &img_msg) const;
 
         void closeServer();
         void loop();

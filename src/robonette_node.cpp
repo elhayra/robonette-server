@@ -3,6 +3,7 @@
 #include <sensor_msgs/BatteryState.h>
 #include <sensor_msgs/Range.h>
 #include <sensor_msgs/Image.h>
+#include <sensor_msgs/CompressedImage.h>
 #include <robonette/manager.h>
 
 rbnt::Manager manager;
@@ -21,14 +22,23 @@ void urfCB(const sensor_msgs::Range::ConstPtr &msg)
 
 void kinectCB(const sensor_msgs::Image::ConstPtr &msg)
 {
-    ROS_INFO("encoding: %s", msg->encoding.c_str());
-    ROS_INFO("width: %i", msg->width);
-    ROS_INFO("height: %i", msg->height);
-    ROS_INFO("steps: %i", msg->step);
-    ROS_INFO("bigendian: %s",(msg->is_bigendian? "true" : "false"));
-    manager.writeImg("Kinect", msg);
+    //ROS_INFO("encoding: %s", msg->encoding.c_str());
+    //ROS_INFO("width: %i", msg->width);
+    //ROS_INFO("height: %i", msg->height);
+    //ROS_INFO("steps: %i", msg->step);
+    //ROS_INFO("bigendian: %s",(msg->is_bigendian? "true" : "false"));
+   // manager.writeImg("Kinect", msg);
 }
 
+void kinectCompressedCB(const sensor_msgs::CompressedImage::ConstPtr &msg)
+{
+    //ROS_INFO("encoding: %s", msg->encoding.c_str());
+    //ROS_INFO("width: %i", msg->width);
+    //ROS_INFO("height: %i", msg->height);
+    //ROS_INFO("steps: %i", msg->step);
+    //ROS_INFO("bigendian: %s",(msg->is_bigendian? "true" : "false"));
+    manager.writeImg("Kinect", msg);
+}
 
 int main(int argc, char** argv)
 {
@@ -47,6 +57,7 @@ int main(int argc, char** argv)
     ros::Subscriber batt_sub = nh.subscribe("battery", 5, battCB);
     ros::Subscriber urf_sub = nh.subscribe("URF/front", 5, urfCB);
     ros::Subscriber kinect_sub = nh.subscribe("/kinect2/qhd/image_color_rect", 5, kinectCB);
+    ros::Subscriber kinect_comp_sub = nh.subscribe("/kinect2/qhd/image_color_rect/compressed", 5, kinectCompressedCB);
 
 
     while (ros::ok())

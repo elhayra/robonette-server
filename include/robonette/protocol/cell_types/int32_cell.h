@@ -14,7 +14,7 @@ namespace rbnt
         static const int SIZE = 4;
         Int32Cell(int index, int32_t value) : PacketCell(index) { setValue(value); }
         Int32Cell(int index) : PacketCell(index) {}
-        bool fromBytes(const byte bytes[], size_t size)
+        bool fromBytes(const uint8_t bytes[], size_t size)
         {
             if (size < getIndex() + SIZE)
                 return false;
@@ -22,9 +22,9 @@ namespace rbnt
             return true;
         }
 
-        void toBytes(byte bytes[]) const
+        void toBytes(uint8_t bytes[]) const
         {
-            byte *bytes_arr = (byte *)& value_;
+            uint8_t *bytes_arr = (uint8_t *)& value_;
             for (int i=0; i<SIZE; i++)
                 bytes[i + getIndex()] = bytes_arr[i];
         };

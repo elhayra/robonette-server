@@ -27,11 +27,12 @@ namespace rbnt
 
         enum class MsgType
         {
-            HEADER =    1,
-            INFO =      2,
-            IMAGE =     3,
-            MAP =       4,
-            COMMAND =   5
+            HEADER =            1,
+            INFO =              2,
+            IMAGE =             3,
+            COMPRESSED_IMAGE =  4,
+            MAP =               5,
+            COMMAND =           6
         };
 
         RbntHeader() : header_start(INDX_HEADER_START),
@@ -45,7 +46,7 @@ namespace rbnt
         void setMsgType(MsgType type) { msg_type.setValue((int)type); }
         void setMsgSize(uint32_t size) { msg_size.setValue(size); }
 
-        bool toBytes(byte bytes[], size_t size)
+        bool toBytes(uint8_t bytes[], size_t size)
         {
             if (size != SIZE)
                 return false;

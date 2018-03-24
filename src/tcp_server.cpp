@@ -36,12 +36,12 @@ namespace rbnt
         return true; //got connection
     }
 
-    int TcpServer::readBytes(byte *bytes, size_t size) const
+    int TcpServer::readBytes(uint8_t *bytes, size_t size) const
     {
         return read(newsockfd_, bytes, size);
     }
 
-    int TcpServer::writeBytes(const byte bytes[], size_t size) const
+    int TcpServer::writeBytes(const uint8_t bytes[], size_t size) const
     {
         return send(newsockfd_, bytes, size, 0);
     }

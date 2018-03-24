@@ -5,6 +5,7 @@
 #include <robonette/tcp_server.h>
 #include <robonette/protocol/messages/info_msg.h>
 #include <robonette/protocol/messages/img_msg.h>
+#include <robonette/protocol/messages/compressed_img_msg.h>
 #include <robonette/protocol/messages/rbnt_header.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CompressedImage.h>
@@ -16,7 +17,7 @@ namespace rbnt
     {
     private:
         TcpServer server_;
-        bool sendBytes(const byte bytes[], size_t size) const;
+        bool sendBytes(const uint8_t bytes[], size_t size) const;
 
     public:
         bool startServer();

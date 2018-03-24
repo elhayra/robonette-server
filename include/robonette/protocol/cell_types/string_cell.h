@@ -16,7 +16,7 @@ namespace rbnt
         static const int SIZE = 20;
         StringCell(int index, std::string value) : PacketCell(index) { setValue(value); }
         StringCell(int index) : PacketCell(index) {}
-        bool fromBytes(const byte bytes[], size_t size)
+        bool fromBytes(const uint8_t bytes[], size_t size)
         {
             if (size < getIndex() + SIZE)
                 return false;
@@ -24,7 +24,7 @@ namespace rbnt
             return true;
         }
 
-        void toBytes(byte bytes[]) const
+        void toBytes(uint8_t bytes[]) const
         {
             char const *bytes_arr = value_.c_str();
             for (int i=0; i<value_.size(); i++)

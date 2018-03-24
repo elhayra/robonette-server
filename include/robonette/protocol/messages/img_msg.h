@@ -19,13 +19,12 @@ namespace rbnt
         Int32Cell width_;
         Int32Cell step_;
         BoolCell is_bigendian_;
-        const uint8_t *data_ = nullptr;
+        const std::vector<uint8_t > *data_ = nullptr;
 
-        void deleteData();
+        static const int FIELDS_SIZE = (StringCell::SIZE * 2) +
+                                       (Int32Cell::SIZE * 3) + BoolCell::SIZE;
 
     public:
-        static const int FIELDS_SIZE = (StringCell::SIZE * 2) +
-                (Int32Cell::SIZE * 3) + BoolCell::SIZE;
 
         static const int INDX_TAG = 0;
         static const int INDX_ENCODING = INDX_TAG + StringCell::SIZE;
@@ -37,14 +36,16 @@ namespace rbnt
 
         ImgMsg();
 
-        bool toBytes(byte bytes[], size_t size);
+        bool toBytes(uint8_t bytes[], size_t size);
         void setTag(const std::string &value) { tag_.setValue(value); }
         void setEncoding(const std::string &value) { encoding_.setValue(value); }
         void setHeight(uint32_t value) { height_.setValue(value); }
         void setWidth(uint32_t value) { width_.setValue(value); }
         void setStep(uint32_t value) { step_.setValue(value); }
         void isBigEndian(bool value) { is_bigendian_.setValue(value); }
-        void setData(const std::vector<uint8_t >& data) { data_ = &data[0]; };
+        void setData(const std::vector<uint8_t >& data) { data_ = &data; };
+
+        size_t getSize() { data_->size() + FIELDS_SIZE; }
     };
 }
 

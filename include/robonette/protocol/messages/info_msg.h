@@ -20,7 +20,6 @@ namespace rbnt
         StringCell tag_;
         StringCell units_;
 
-
         Int32Cell data_int_;
         Float32Cell data_float32_;
         Float64Cell data_float64_;
@@ -52,19 +51,19 @@ namespace rbnt
 
         InfoMsg();
 
-        void setDataType(const DataType &value) { type_.setValue((byte)value); }
+        void setDataType(const DataType &value) { type_.setValue((uint8_t)value); }
         void setDataTag(const std::string &value) { tag_.setValue(value); }
         void setDataUnits(const std::string &value) { units_.setValue(value); }
 
         void setDataInt32(const int32_t &value) { data_int_.setValue(value); }
         void setDataFloat32(const float &value) { data_float32_.setValue(value); }
         void setDataFloat64(const double &value) { data_float64_.setValue(value); }
-        void setDataByte(const byte &value) { data_byte_.setValue(value); }
+        void setDataByte(const uint8_t &value) { data_byte_.setValue(value); }
         void setDataBool(const bool &value) { data_bool_.setValue(value); }
         void setDataString(const std::string &value) { data_string_.setValue(value); }
 
-        bool toBytes(byte bytes[], size_t size);
-        DataType byteToDataType(byte byte_in) const;
+        bool toBytes(uint8_t bytes[], size_t size);
+        DataType byteToDataType(uint8_t byte_in) const;
     };
 }
 

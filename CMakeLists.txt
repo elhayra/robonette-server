@@ -126,6 +126,7 @@ set(
         src/manager.cpp
         src/protocol/messages/info_msg.cpp
         src/protocol/messages/img_msg.cpp
+        src/protocol/messages/compressed_img_msg.cpp
 
         include/robonette/tcp_server.h
         include/robonette/manager.h
@@ -140,10 +141,11 @@ set(
         include/robonette/protocol/messages/rbnt_msg.h
         include/robonette/protocol/messages/img_msg.h
         include/robonette/protocol/messages/rbnt_header.h
+        include/robonette/protocol/messages/compressed_img_msg.h
 )
 
 ## Declare a C++ library
-add_library(${PROJECT_NAME} ${PROJECT_FILES} )
+add_library(${PROJECT_NAME} ${PROJECT_FILES})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

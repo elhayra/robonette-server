@@ -9,7 +9,7 @@ namespace rbnt
         //TODO: get bytes from client (commands)
     }
 
-    bool Manager::sendBytes(const byte bytes[], size_t size) const
+    bool Manager::sendBytes(const uint8_t bytes[], size_t size) const
     {
         int bytes_sent = 0;
         while (bytes_sent < size)
@@ -22,6 +22,7 @@ namespace rbnt
         }
 
 
+
         fprintf(stderr, "sent: %i\n", bytes_sent);
         if (bytes_sent == size)
             return true;
@@ -31,25 +32,28 @@ namespace rbnt
     bool Manager::writeImg(std::string tag,
                            const sensor_msgs::CompressedImage::ConstPtr &img_msg) const
     {
-        const size_t msg_size = ImgMsg::FIELDS_SIZE +
-                                (img_msg->data.size());
+        // build msg
+        CompressedImgMsg msg;
+        msg.setTag(tag);
+        msg.setFormat(img_msg->format);
+        msg.setImgSize(img_msg->data.size());
+        msg.setData(img_msg->data);
 
+        const size_t msg_size = msg.getSize();
+
+        // build header
         RbntHeader header;
         header.setHeaderStart(RbntHeader::VALID_HEADER_START);
-        header.setMsgType(RbntHeader::MsgType::IMAGE);
+        header.setMsgType(RbntHeader::MsgType::COMPRESSED_IMAGE);
         header.setMsgSize(msg_size);
 
-        byte header_bytes[RbntHeader::SIZE];
+        // send header
+        uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
         sendBytes(header_bytes, RbntHeader::SIZE);
 
-        ImgMsg msg;
-        msg.setTag(tag);
-        msg.setEncoding(img_msg->format);
-        msg.setData(img_msg->data);
-        msg.setHeight(img_msg->data.size());
-
-        byte msg_bytes[msg_size];
+        // send msg
+        uint8_t msg_bytes[msg_size];
         msg.toBytes(msg_bytes, msg_size);
         return sendBytes(msg_bytes, msg_size);
     }
@@ -57,18 +61,7 @@ namespace rbnt
     bool Manager::writeImg(std::string tag,
                            const sensor_msgs::Image::ConstPtr &img_msg) const
     {
-        const size_t msg_size = ImgMsg::FIELDS_SIZE +
-                (img_msg->step * img_msg->height);
-
-        RbntHeader header;
-        header.setHeaderStart(RbntHeader::VALID_HEADER_START);
-        header.setMsgType(RbntHeader::MsgType::IMAGE);
-        header.setMsgSize(msg_size);
-
-        byte header_bytes[RbntHeader::SIZE];
-        header.toBytes(header_bytes, RbntHeader::SIZE);
-        sendBytes(header_bytes, RbntHeader::SIZE);
-
+        // build msg
         ImgMsg msg;
         msg.setTag(tag);
         msg.setEncoding(img_msg->encoding);
@@ -78,10 +71,21 @@ namespace rbnt
         msg.isBigEndian(img_msg->is_bigendian);
         msg.setData(img_msg->data);
 
- //       for (int i=0; i<img_msg->step * img_msg->height;i++)
-  //          printf("%i:\n",img_msg->data[i]);
+        const size_t msg_size = msg.getSize();
 
-        byte msg_bytes[msg_size];
+        // build header
+        RbntHeader header;
+        header.setHeaderStart(RbntHeader::VALID_HEADER_START);
+        header.setMsgType(RbntHeader::MsgType::IMAGE);
+        header.setMsgSize(msg_size);
+
+        // send header
+        uint8_t header_bytes[RbntHeader::SIZE];
+        header.toBytes(header_bytes, RbntHeader::SIZE);
+        sendBytes(header_bytes, RbntHeader::SIZE);
+
+        // send msg
+        uint8_t msg_bytes[msg_size];
         msg.toBytes(msg_bytes, msg_size);
         return sendBytes(msg_bytes, msg_size);
     }
@@ -95,7 +99,7 @@ namespace rbnt
         header.setMsgType(RbntHeader::MsgType::INFO);
         header.setMsgSize(InfoMsg::SIZE);
 
-        byte header_bytes[RbntHeader::SIZE];
+        uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
         sendBytes(header_bytes, RbntHeader::SIZE);
 
@@ -105,7 +109,7 @@ namespace rbnt
         msg.setDataUnits(units);
         msg.setDataInt32(data);
 
-        byte msg_bytes[InfoMsg::SIZE];
+        uint8_t msg_bytes[InfoMsg::SIZE];
         msg.toBytes(msg_bytes, InfoMsg::SIZE);
         return sendBytes(msg_bytes, InfoMsg::SIZE);
     }
@@ -119,7 +123,7 @@ namespace rbnt
         header.setMsgType(RbntHeader::MsgType::INFO);
         header.setMsgSize(InfoMsg::SIZE);
 
-        byte header_bytes[RbntHeader::SIZE];
+        uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
         sendBytes(header_bytes, RbntHeader::SIZE);
 
@@ -129,7 +133,7 @@ namespace rbnt
         msg.setDataUnits(units);
         msg.setDataFloat32(data);
 
-        byte msg_bytes[InfoMsg::SIZE];
+        uint8_t msg_bytes[InfoMsg::SIZE];
         msg.toBytes(msg_bytes, InfoMsg::SIZE);
         return sendBytes(msg_bytes, InfoMsg::SIZE);
     }

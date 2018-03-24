@@ -14,7 +14,7 @@ namespace rbnt
                         data_string_(INDX_DATA){}
 
 
-    bool InfoMsg::toBytes(byte bytes[], size_t size)
+    bool InfoMsg::toBytes(uint8_t bytes[], size_t size)
     {
         if (size != SIZE)
             return false;
@@ -61,7 +61,7 @@ namespace rbnt
         return true;
     }
 
-    InfoMsg::DataType InfoMsg::byteToDataType(byte byte_in) const
+    InfoMsg::DataType InfoMsg::byteToDataType(uint8_t byte_in) const
     {
         switch(byte_in)
         {

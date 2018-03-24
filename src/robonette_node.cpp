@@ -27,16 +27,12 @@ void kinectCB(const sensor_msgs::Image::ConstPtr &msg)
     //ROS_INFO("height: %i", msg->height);
     //ROS_INFO("steps: %i", msg->step);
     //ROS_INFO("bigendian: %s",(msg->is_bigendian? "true" : "false"));
-   // manager.writeImg("Kinect", msg);
+    //manager.writeImg("Kinect", msg);
 }
 
 void kinectCompressedCB(const sensor_msgs::CompressedImage::ConstPtr &msg)
 {
-    //ROS_INFO("encoding: %s", msg->encoding.c_str());
-    //ROS_INFO("width: %i", msg->width);
-    //ROS_INFO("height: %i", msg->height);
-    //ROS_INFO("steps: %i", msg->step);
-    //ROS_INFO("bigendian: %s",(msg->is_bigendian? "true" : "false"));
+    ROS_INFO("encoding: %s", msg->format.c_str());
     manager.writeImg("Kinect", msg);
 }
 
@@ -59,13 +55,9 @@ int main(int argc, char** argv)
     ros::Subscriber kinect_sub = nh.subscribe("/kinect2/qhd/image_color_rect", 5, kinectCB);
     ros::Subscriber kinect_comp_sub = nh.subscribe("/kinect2/qhd/image_color_rect/compressed", 5, kinectCompressedCB);
 
-
-    while (ros::ok())
-    {
-        manager.loop();
-        ros::Duration(1).sleep();
-        ros::spinOnce();
-    }
+    ros::AsyncSpinner spinner(4);
+    spinner.start();
+    ros::waitForShutdown();
 
     return 0;
 }

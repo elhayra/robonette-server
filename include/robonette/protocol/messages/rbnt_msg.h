@@ -9,7 +9,7 @@ namespace rbnt
 {
     class RbntMsg
     {
-        virtual bool toBytes(byte bytes[], size_t size) = 0;
+        virtual bool toBytes(uint8_t bytes[], size_t size) = 0;
     };
 }
 

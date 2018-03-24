@@ -11,11 +11,13 @@ namespace rbnt
                         is_bigendian_(INDX_BIGENDIAN){}
 
 
-    bool ImgMsg::toBytes(byte *bytes, size_t size)
+    bool ImgMsg::toBytes(uint8_t *bytes, size_t size)
     {
-        const size_t my_size = /*ImgMsg::FIELDS_SIZE +*/ size;
-                               //(step_.getValue() * height_.getValue()); // TODO: RETURN THIS LINE AND DELETE SIZE
-        if (size != my_size)
+        // data is empty or not match height*step
+        if (!data_->size() ||
+            (data_->size() != height_.getValue() * step_.getValue()))
+            return false;
+        if (size != getSize())
             return false;
 
         tag_.toBytes(bytes);
@@ -25,9 +27,8 @@ namespace rbnt
         step_.toBytes(bytes);
         is_bigendian_.toBytes(bytes);
 
-        //TODO: FIX PROBLEM HERE
         for (int indx = INDX_DATA; indx < size; indx++)
-            bytes[indx] = data_[indx - INDX_DATA];
+            bytes[indx] = data_->at(indx - INDX_DATA);
 
         return true;
     }

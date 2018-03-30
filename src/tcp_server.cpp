@@ -1,3 +1,36 @@
+/*******************************************************************************
+* Copyright (c) 2018 Elhay Rauper
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted (subject to the limitations in the disclaimer
+* below) provided that the following conditions are met:
+*
+*     * Redistributions of source code must retain the above copyright notice,
+*     this list of conditions and the following disclaimer.
+*
+*     * Redistributions in binary form must reproduce the above copyright
+*     notice, this list of conditions and the following disclaimer in the
+*     documentation and/or other materials provided with the distribution.
+*
+*     * Neither the name of the copyright holder nor the names of its
+*     contributors may be used to endorse or promote products derived from this
+*     software without specific prior written permission.
+*
+* NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY
+* THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+* CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+* PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+* EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+* BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+* IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+
 /* synchronized TCP server */
 
 #include <robonette/tcp_server.h>
@@ -22,9 +55,15 @@ namespace rbnt
         return true;
     }
 
-    void TcpServer::startListen()
+    bool TcpServer::startListen()
     {
-        listen(sockfd_, 5);
+        int state = listen(sockfd_, 5);
+        if (state == 0)
+        {
+            is_server_open_ = true;
+            return true;
+        }
+        return false;
     }
 
     bool TcpServer::acceptClient()
@@ -33,6 +72,7 @@ namespace rbnt
         newsockfd_ = accept(sockfd_, (struct sockaddr *) &cli_addr_, &clilen_);
         if (newsockfd_ < 0)
             return false; //error accepting client
+        is_client_connected_ = true;
         return true; //got connection
     }
 
@@ -41,15 +81,25 @@ namespace rbnt
         return read(newsockfd_, bytes, size);
     }
 
-    int TcpServer::writeBytes(const uint8_t bytes[], size_t size) const
+    int TcpServer::writeBytes(const uint8_t bytes[], size_t size)
     {
-        return send(newsockfd_, bytes, size, 0);
+        int n = send(newsockfd_, bytes, size, 0);
+        if (n == -1)
+            closeClient();
+        return n;
     }
 
     void TcpServer::closeServer()
     {
-
+        is_client_connected_ = false;
+        is_server_open_ = false;
         close(newsockfd_);
         close(sockfd_);
+    }
+
+    void TcpServer::closeClient()
+    {
+        is_client_connected_ = false;
+        close(newsockfd_);
     }
 }

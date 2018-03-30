@@ -125,6 +125,7 @@ set(
         src/tcp_server.cpp
         src/manager.cpp
         src/protocol/messages/info_msg.cpp
+        src/protocol/messages/map_msg.cpp
         src/protocol/messages/img_msg.cpp
         src/protocol/messages/compressed_img_msg.cpp
 
@@ -139,6 +140,7 @@ set(
         include/robonette/protocol/cell_types/packet_cell.h
         include/robonette/protocol/messages/info_msg.h
         include/robonette/protocol/messages/rbnt_msg.h
+        include/robonette/protocol/messages/map_msg.h
         include/robonette/protocol/messages/img_msg.h
         include/robonette/protocol/messages/rbnt_header.h
         include/robonette/protocol/messages/compressed_img_msg.h

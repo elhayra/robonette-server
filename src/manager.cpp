@@ -172,8 +172,7 @@ namespace rbnt
 
     bool Manager::writeMap(const nav_msgs::OccupancyGrid::ConstPtr &map_msg)
     {
-        size_t msg_size = MapMsg::FIELDS_SIZE +
-                (map_msg->info.width * map_msg->info.height);
+        size_t msg_size = MapMsg::FIELDS_SIZE + map_msg->data.size();
         RbntHeader header;
         header.setHeaderStart(RbntHeader::VALID_HEADER_START);
         header.setMsgType(RbntHeader::MsgType::MAP);

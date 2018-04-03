@@ -45,6 +45,7 @@ namespace rbnt
         // data is empty
         if (!data_->size())
             return false;
+        size_t s = getSize();
         if (size != getSize())
             return false;
 

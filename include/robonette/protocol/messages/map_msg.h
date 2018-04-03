@@ -67,7 +67,11 @@ namespace rbnt
         void setHeight(const uint32_t value) { height_.setValue(value); }
         void setData(const std::vector<int8_t >& data) { data_ = &data; };
 
-        size_t getSize() { data_->size() + FIELDS_SIZE; }
+        size_t getSize() {
+            int data = data_->size();
+            int fields = FIELDS_SIZE;
+            return data + fields;
+        }
     };
 
 }

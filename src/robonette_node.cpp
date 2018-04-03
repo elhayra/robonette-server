@@ -52,8 +52,8 @@ void battCB(const sensor_msgs::BatteryState::ConstPtr &msg)
 void urfCB(const sensor_msgs::Range::ConstPtr &msg)
 {
     float sensor_lvl = msg->range;
-    if (manager.isClientConnected())
-        manager.writeInfo("Ultrasonic", sensor_lvl, "meters");
+ //   if (manager.isClientConnected())
+ //       manager.writeInfo("Ultrasonic", sensor_lvl, "meters");
 }
 
 void kinectCB(const sensor_msgs::Image::ConstPtr &msg)

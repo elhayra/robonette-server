@@ -44,6 +44,7 @@ namespace rbnt
 
     bool Manager::sendBytes(const uint8_t bytes[], size_t size)
     {
+
         int bytes_sent = 0;
         while (bytes_sent < size)
         {
@@ -56,14 +57,17 @@ namespace rbnt
 
 
         fprintf(stderr, "sent: %i\n", bytes_sent);
-        if (bytes_sent == size)
-            return true;
-        return false;
+
+        return bytes_sent == size;
     }
 
     bool Manager::writeImg(std::string tag,
                            const sensor_msgs::CompressedImage::ConstPtr &img_msg)
     {
+        comm_mutex_.lock();
+
+        bool success = false;
+
         // build msg
         CompressedImgMsg msg;
         msg.setTag(tag);
@@ -82,17 +86,30 @@ namespace rbnt
         // send header
         uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
-        sendBytes(header_bytes, RbntHeader::SIZE);
+        if (sendBytes(header_bytes, RbntHeader::SIZE))
+        {
+            // send msg
+            uint8_t msg_bytes[msg_size];
+            msg.toBytes(msg_bytes, msg_size);
+            if (sendBytes(msg_bytes, msg_size))
+                success = true;
+        }
 
-        // send msg
-        uint8_t msg_bytes[msg_size];
-        msg.toBytes(msg_bytes, msg_size);
-        return sendBytes(msg_bytes, msg_size);
+
+
+        comm_mutex_.unlock();
+
+        return success;
+
     }
 
     bool Manager::writeImg(std::string tag,
                            const sensor_msgs::Image::ConstPtr &img_msg)
     {
+        comm_mutex_.lock();
+
+        bool success = false;
+
         // build msg
         ImgMsg msg;
         msg.setTag(tag);
@@ -114,18 +131,30 @@ namespace rbnt
         // send header
         uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
-        sendBytes(header_bytes, RbntHeader::SIZE);
+        if (sendBytes(header_bytes, RbntHeader::SIZE))
+        {
+            // send msg
+            uint8_t msg_bytes[msg_size];
+            msg.toBytes(msg_bytes, msg_size);
+            if (sendBytes(msg_bytes, msg_size))
+                success = true;
+        }
 
-        // send msg
-        uint8_t msg_bytes[msg_size];
-        msg.toBytes(msg_bytes, msg_size);
-        return sendBytes(msg_bytes, msg_size);
+
+
+        comm_mutex_.unlock();
+        return success;
     }
 
     bool Manager::writeInfo(std::string tag,
                             int32_t data,
                             std::string units)
     {
+        comm_mutex_.lock();
+
+        bool success = false;
+
+        //build header
         RbntHeader header;
         header.setHeaderStart(RbntHeader::VALID_HEADER_START);
         header.setMsgType(RbntHeader::MsgType::INFO);
@@ -133,23 +162,34 @@ namespace rbnt
 
         uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
-        sendBytes(header_bytes, RbntHeader::SIZE);
+        if (sendBytes(header_bytes, RbntHeader::SIZE))
+        {
+            InfoMsg msg;
+            msg.setDataType(InfoMsg::DataType::INT32);
+            msg.setDataTag(tag);
+            msg.setDataUnits(units);
+            msg.setDataInt32(data);
 
-        InfoMsg msg;
-        msg.setDataType(InfoMsg::DataType::INT32);
-        msg.setDataTag(tag);
-        msg.setDataUnits(units);
-        msg.setDataInt32(data);
+            uint8_t msg_bytes[InfoMsg::SIZE];
+            msg.toBytes(msg_bytes, InfoMsg::SIZE);
+            if (sendBytes(msg_bytes, InfoMsg::SIZE))
+                success = true;
 
-        uint8_t msg_bytes[InfoMsg::SIZE];
-        msg.toBytes(msg_bytes, InfoMsg::SIZE);
-        return sendBytes(msg_bytes, InfoMsg::SIZE);
+        }
+
+
+        comm_mutex_.unlock();
+        return success;
     }
 
     bool Manager::writeInfo(std::string tag,
                             float data,
                             std::string units)
     {
+        comm_mutex_.lock();
+
+        bool success = false;
+
         RbntHeader header;
         header.setHeaderStart(RbntHeader::VALID_HEADER_START);
         header.setMsgType(RbntHeader::MsgType::INFO);
@@ -157,21 +197,32 @@ namespace rbnt
 
         uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
-        sendBytes(header_bytes, RbntHeader::SIZE);
+        if (sendBytes(header_bytes, RbntHeader::SIZE))
+        {
+            InfoMsg msg;
+            msg.setDataType(InfoMsg::DataType::FLOAT32);
+            msg.setDataTag(tag);
+            msg.setDataUnits(units);
+            msg.setDataFloat32(data);
 
-        InfoMsg msg;
-        msg.setDataType(InfoMsg::DataType::FLOAT32);
-        msg.setDataTag(tag);
-        msg.setDataUnits(units);
-        msg.setDataFloat32(data);
+            uint8_t msg_bytes[InfoMsg::SIZE];
+            msg.toBytes(msg_bytes, InfoMsg::SIZE);
+            if (sendBytes(msg_bytes, InfoMsg::SIZE))
+                success = true;
+        }
 
-        uint8_t msg_bytes[InfoMsg::SIZE];
-        msg.toBytes(msg_bytes, InfoMsg::SIZE);
-        return sendBytes(msg_bytes, InfoMsg::SIZE);
+
+
+        comm_mutex_.unlock();
+        return success;
     }
 
     bool Manager::writeMap(const nav_msgs::OccupancyGrid::ConstPtr &map_msg)
     {
+        comm_mutex_.lock();
+
+        bool success = false;
+
         size_t msg_size = MapMsg::FIELDS_SIZE + map_msg->data.size();
         RbntHeader header;
         header.setHeaderStart(RbntHeader::VALID_HEADER_START);
@@ -180,17 +231,30 @@ namespace rbnt
 
         uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
-        sendBytes(header_bytes, RbntHeader::SIZE);
+        if (sendBytes(header_bytes, RbntHeader::SIZE))
+        {
+            MapMsg msg;
+            msg.setResolution(map_msg->info.resolution);
+            msg.setWidth(map_msg->info.width);
+            msg.setHeight(map_msg->info.height);
+            msg.setData(map_msg->data);
 
-        MapMsg msg;
-        msg.setResolution(map_msg->info.resolution);
-        msg.setWidth(map_msg->info.width);
-        msg.setHeight(map_msg->info.height);
-        msg.setData(map_msg->data);
+            uint8_t msg_bytes[msg_size];
+            msg.toBytes(msg_bytes, msg_size);
 
-        uint8_t msg_bytes[msg_size];
-        msg.toBytes(msg_bytes, msg_size);
-        return sendBytes(msg_bytes, msg_size);
+            //fprintf(stderr, "byte w 1 %d\n", (int8_t)msg_bytes[4]);
+            //fprintf(stderr, "byte w 2 %d\n", (int8_t)msg_bytes[4 + 1]);
+            //fprintf(stderr, "byte w 3 %d\n", (int8_t)msg_bytes[4 + 2]);
+            //fprintf(stderr, "byte w 4 %d\n", (int8_t)msg_bytes[4 + 3]);
+
+            if (sendBytes(msg_bytes, msg_size))
+                success = true;
+
+        }
+
+
+        comm_mutex_.unlock();
+        return success;
     }
 
     bool Manager::startServer()

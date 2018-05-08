@@ -43,6 +43,7 @@
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CompressedImage.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <boost/thread.hpp>
 #include <iostream>
 
 namespace rbnt
@@ -51,6 +52,8 @@ namespace rbnt
     {
     private:
         TcpServer server_;
+        // prevent parallel access to tcp socket
+        boost::mutex comm_mutex_;
         bool sendBytes(const uint8_t bytes[], size_t size);
 
     public:

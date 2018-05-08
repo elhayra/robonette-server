@@ -51,7 +51,7 @@ namespace rbnt
         {
             if (size < getIndex() + SIZE)
                 return false;
-            memcpy(&value_, bytes, SIZE);
+            memcpy(&value_, bytes + getIndex(), SIZE);
             return true;
         }
 

@@ -53,6 +53,9 @@ namespace rbnt
         width_.toBytes(bytes);
         height_.toBytes(bytes);
 
+        width_.fromBytes(bytes, size);
+        height_.fromBytes(bytes, size);
+
         for (int indx = INDX_DATA; indx < size; indx++)
             bytes[indx] = data_->at(indx - INDX_DATA);
         return true;

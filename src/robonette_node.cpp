@@ -45,15 +45,15 @@ rbnt::Manager manager;
 void battCB(const sensor_msgs::BatteryState::ConstPtr &msg)
 {
     int32_t batt_lvl = (int32_t)msg->percentage;
-   // if (manager.isClientConnected())
-   //     manager.writeInfo("Battery", batt_lvl, "%");
+    if (manager.isClientConnected())
+        manager.writeInfo("Battery", batt_lvl, "%");
 }
 
 void urfCB(const sensor_msgs::Range::ConstPtr &msg)
 {
     float sensor_lvl = msg->range;
- //   if (manager.isClientConnected())
- //       manager.writeInfo("Ultrasonic", sensor_lvl, "meters");
+    if (manager.isClientConnected())
+        manager.writeInfo("Ultrasonic", sensor_lvl, "meters");
 }
 
 void kinectCB(const sensor_msgs::Image::ConstPtr &msg)
@@ -63,23 +63,23 @@ void kinectCB(const sensor_msgs::Image::ConstPtr &msg)
     //ROS_INFO("height: %i", msg->height);
     //ROS_INFO("steps: %i", msg->step);
     //ROS_INFO("bigendian: %s",(msg->is_bigendian? "true" : "false"));
-   // if (manager.isClientConnected())
-        //manager.writeImg("Kinect", msg);
+    if (manager.isClientConnected())
+        manager.writeImg("Kinect", msg);
 }
 
 void kinectCompressedCB(const sensor_msgs::CompressedImage::ConstPtr &msg)
 {
     ROS_INFO("encoding: %s", msg->format.c_str());
-    //if (manager.isClientConnected())
-     //   manager.writeImg("Kinect", msg);
+    if (manager.isClientConnected())
+        manager.writeImg("Kinect", msg);
 }
 
 void mapCB(const nav_msgs::OccupancyGrid::ConstPtr &msg)
 {
-    //fprintf(stderr, "got map msg\n");
-    //fprintf(stderr, "server is %i\n", manager.isServerOpen());
-      if (manager.isClientConnected())
-          manager.writeMap(msg);
+    fprintf(stderr, "got map msg\n");
+    fprintf(stderr, "server is %i\n", manager.isServerOpen());
+    //if (manager.isClientConnected())
+    //      manager.writeMap(msg);
 }
 
 void startServer()

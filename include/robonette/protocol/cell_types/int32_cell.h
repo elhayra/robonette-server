@@ -36,6 +36,7 @@
 #define ROBONETTE_SERVER_INT32_CELL_H
 
 #include <robonette/protocol/cell_types/packet_cell.h>
+#include <algorithm>
 
 namespace rbnt
 {
@@ -51,15 +52,18 @@ namespace rbnt
         {
             if (size < getIndex() + SIZE)
                 return false;
-            memcpy(&value_, bytes, SIZE);
+            memcpy(&value_, bytes + getIndex(), SIZE);
             return true;
         }
 
         void toBytes(uint8_t bytes[]) const
         {
-            uint8_t *bytes_arr = (uint8_t *)& value_;
+            uint8_t *value_bytes = (uint8_t *)& value_;
             for (int i=0; i<SIZE; i++)
-                bytes[i + getIndex()] = bytes_arr[i];
+                bytes[i + getIndex()] = value_bytes[i];
+
+            //std::copy(value_bytes, value_bytes + SIZE, bytes);
+
         };
 
         void setValue(int32_t value) { value_ = value; }

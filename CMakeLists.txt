@@ -128,6 +128,7 @@ set(
         src/protocol/messages/map_msg.cpp
         src/protocol/messages/img_msg.cpp
         src/protocol/messages/compressed_img_msg.cpp
+        src/protocol/messages/cmd_msg.cpp
 
         include/robonette/tcp_server.h
         include/robonette/manager.h
@@ -144,6 +145,7 @@ set(
         include/robonette/protocol/messages/img_msg.h
         include/robonette/protocol/messages/rbnt_header.h
         include/robonette/protocol/messages/compressed_img_msg.h
+        include/robonette/protocol/messages/cmd_msg.h
 )
 
 ## Declare a C++ library

@@ -58,8 +58,8 @@ namespace rbnt
         bool bindTo(int port);
         bool startListen();
         bool acceptClient();
-        int writeBytes(const uint8_t bytes[], size_t size);
-        int  readBytes(uint8_t bytes[], size_t size) const;
+        bool writeBytes(const uint8_t bytes[], size_t size);
+        bool readBytes(uint8_t bytes[], size_t size);
         void closeServer();
         void closeClient();
         bool isClientConnected() { return is_client_connected_; }

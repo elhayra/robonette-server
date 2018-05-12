@@ -34,31 +34,58 @@
 
 #include <robonette/manager.h>
 
+
 namespace rbnt
 {
-
-    void Manager::loop()
+    Manager::Manager()
     {
-        //TODO: get bytes from client (commands)
     }
 
-    bool Manager::sendBytes(const uint8_t bytes[], size_t size)
+    Manager::~Manager()
     {
+        delete read_thread_;
+        server_.closeServer();
+    }
 
-        int bytes_sent = 0;
-        while (bytes_sent < size)
+    void Manager::readLoop()
+    {
+        while (isClientConnected())
         {
-            int n = server_.writeBytes(bytes + bytes_sent, size - bytes_sent);
-            if (n == -1) // client disconnected
-                return false;
-            bytes_sent += n;
+            //puts("here");
+            uint8_t header_bytes[RbntHeader::SIZE];
+            if (server_.readBytes(header_bytes, RbntHeader::SIZE))
+            {
+                RbntHeader header;
+                if (header.fromBytes(header_bytes, RbntHeader::SIZE))
+                {
+                    switch (header.getMsgType())
+                    {
+                        case RbntHeader::MsgType::COMMAND:
+                        {
+                            uint8_t cmd_bytes[CmdMsg::SIZE];
+                            if (server_.readBytes(cmd_bytes, CmdMsg::SIZE))
+                            {
+                                CmdMsg cmd_msg;
+                                if (cmd_msg.fromBytes(cmd_bytes, CmdMsg::SIZE))
+                                {
+                                    for (callback_function f : cmd_cb_funcs_)
+                                    {
+                                        f(cmd_msg.value.getValue(), cmd_msg.id.getValue());
+                                    }
+                                    /*if (cmd_msg.value.getValue() != 0)
+                                    fprintf(stderr, "got cmd id: %i, value: %f\n",
+                                            cmd_msg.id.getValue(),
+                                            cmd_msg.value.getValue());*/
+
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
-
-
-        fprintf(stderr, "sent: %i\n", bytes_sent);
-
-        return bytes_sent == size;
     }
 
     bool Manager::writeImg(std::string tag,
@@ -86,12 +113,12 @@ namespace rbnt
         // send header
         uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
-        if (sendBytes(header_bytes, RbntHeader::SIZE))
+        if (server_.writeBytes(header_bytes, RbntHeader::SIZE))
         {
             // send msg
             uint8_t msg_bytes[msg_size];
             msg.toBytes(msg_bytes, msg_size);
-            if (sendBytes(msg_bytes, msg_size))
+            if (server_.writeBytes(msg_bytes, msg_size))
                 success = true;
         }
 
@@ -131,12 +158,12 @@ namespace rbnt
         // send header
         uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
-        if (sendBytes(header_bytes, RbntHeader::SIZE))
+        if (server_.writeBytes(header_bytes, RbntHeader::SIZE))
         {
             // send msg
             uint8_t msg_bytes[msg_size];
             msg.toBytes(msg_bytes, msg_size);
-            if (sendBytes(msg_bytes, msg_size))
+            if (server_.writeBytes(msg_bytes, msg_size))
                 success = true;
         }
 
@@ -162,7 +189,7 @@ namespace rbnt
 
         uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
-        if (sendBytes(header_bytes, RbntHeader::SIZE))
+        if (server_.writeBytes(header_bytes, RbntHeader::SIZE))
         {
             InfoMsg msg;
             msg.setDataType(InfoMsg::DataType::INT32);
@@ -172,7 +199,7 @@ namespace rbnt
 
             uint8_t msg_bytes[InfoMsg::SIZE];
             msg.toBytes(msg_bytes, InfoMsg::SIZE);
-            if (sendBytes(msg_bytes, InfoMsg::SIZE))
+            if (server_.writeBytes(msg_bytes, InfoMsg::SIZE))
                 success = true;
 
         }
@@ -197,7 +224,7 @@ namespace rbnt
 
         uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
-        if (sendBytes(header_bytes, RbntHeader::SIZE))
+        if (server_.writeBytes(header_bytes, RbntHeader::SIZE))
         {
             InfoMsg msg;
             msg.setDataType(InfoMsg::DataType::FLOAT32);
@@ -207,7 +234,7 @@ namespace rbnt
 
             uint8_t msg_bytes[InfoMsg::SIZE];
             msg.toBytes(msg_bytes, InfoMsg::SIZE);
-            if (sendBytes(msg_bytes, InfoMsg::SIZE))
+            if (server_.writeBytes(msg_bytes, InfoMsg::SIZE))
                 success = true;
         }
 
@@ -231,7 +258,7 @@ namespace rbnt
 
         uint8_t header_bytes[RbntHeader::SIZE];
         header.toBytes(header_bytes, RbntHeader::SIZE);
-        if (sendBytes(header_bytes, RbntHeader::SIZE))
+        if (server_.writeBytes(header_bytes, RbntHeader::SIZE))
         {
             MapMsg msg;
             msg.setResolution(map_msg->info.resolution);
@@ -247,7 +274,7 @@ namespace rbnt
             //fprintf(stderr, "byte w 3 %d\n", (int8_t)msg_bytes[4 + 2]);
             //fprintf(stderr, "byte w 4 %d\n", (int8_t)msg_bytes[4 + 3]);
 
-            if (sendBytes(msg_bytes, msg_size))
+            if (server_.writeBytes(msg_bytes, msg_size))
                 success = true;
 
         }
@@ -262,6 +289,15 @@ namespace rbnt
         server_.bindTo(5005);
         server_.startListen();
         return true;
+    }
+
+    void Manager::waitForClient()
+    {
+        if (read_thread_ != nullptr)
+            delete read_thread_;
+        server_.acceptClient();
+        read_thread_ = new boost::thread(&Manager::readLoop, this);
+        assert(read_thread_ != nullptr);
     }
 
 

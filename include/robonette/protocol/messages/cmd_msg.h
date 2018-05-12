@@ -31,41 +31,34 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef ROBONETTE_SERVER_FLOAT32_CELL_H
-#define ROBONETTE_SERVER_FLOAT32_CELL_H
+#ifndef CMD_MSG_H
+#define CMD_MSG_H
 
-#include <robonette/protocol/cell_types/packet_cell.h>
+#include <robonette/protocol/cell_types/float32_cell.h>
+#include <robonette/protocol/cell_types/byte_cell.h>
+#include <robonette/protocol/messages/rbnt_msg.h>
+#include <vector>
 
 namespace rbnt
 {
-    class Float32Cell : public PacketCell
+    class CmdMsg : RbntMsg
     {
     private:
-        float value_ = 0;
+
+
     public:
-        static const int SIZE = 4;
-        Float32Cell(int index, float value) : PacketCell(index) { setValue(value); }
-        Float32Cell(int index) : PacketCell(index) {}
+        ByteCell id;
+        Float32Cell value;
 
-        bool fromBytes(const uint8_t bytes[], size_t size)
-        {
-            if (size < getIndex() + SIZE)
-                return false;
-            memcpy(&value_, bytes + getIndex(), SIZE);
-            return true;
-        }
+        static const int SIZE = ByteCell::SIZE + Float32Cell::SIZE;
 
-        void toBytes(uint8_t bytes[]) const
-        {
-            uint8_t *bytes_arr = (uint8_t *)& value_;
-            for (int i=0; i<SIZE; i++)
-                bytes[i + getIndex()] = bytes_arr[i];
-        };
+        static const int INDX_ID = 0;
+        static const int INDX_VALUE = INDX_ID + ByteCell::SIZE;
 
-        void setValue(float value) { value_ = value; }
-        float getValue() { return value_; }
+        CmdMsg();
 
+        bool toBytes(uint8_t bytes[], size_t size);
+        bool fromBytes(uint8_t bytes[], size_t size);
     };
 }
-
-#endif //ROBONETTE_SERVER_FLOAT32_CELL_H
+#endif

@@ -82,12 +82,27 @@ namespace rbnt
             if (size != SIZE)
                 return false;
 
+            header_start.setValue(VALID_HEADER_START);
+
             header_start.toBytes(bytes);
             msg_type.toBytes(bytes);
             msg_size.toBytes(bytes);
 
+            return true;
+        }
+
+        bool fromBytes(uint8_t bytes[], size_t size)
+        {
+            if (size != SIZE)
+                return false;
+
+            header_start.fromBytes(bytes, size);
+            msg_type.fromBytes(bytes, size);
+            msg_size.fromBytes(bytes, size);
+
             if (header_start.getValue() != VALID_HEADER_START)
                 return false;
+
             return true;
         }
     };

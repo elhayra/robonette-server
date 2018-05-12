@@ -76,17 +76,39 @@ namespace rbnt
         return true; //got connection
     }
 
-    int TcpServer::readBytes(uint8_t *bytes, size_t size) const
+    bool TcpServer::readBytes(uint8_t *bytes, size_t size)
     {
-        return read(newsockfd_, bytes, size);
+        int bytes_read = 0;
+        while (bytes_read < size)
+        {
+            int n = read(newsockfd_, bytes + bytes_read, size - bytes_read);
+            if (n == 0 || n == -1) // client disconnected
+            {
+                closeClient();
+                return false;
+            }
+
+            bytes_read += n;
+        }
+        //fprintf(stderr, "read: %i\n", bytes_read);
+        return bytes_read == size;
     }
 
-    int TcpServer::writeBytes(const uint8_t bytes[], size_t size)
+    bool TcpServer::writeBytes(const uint8_t bytes[], size_t size)
     {
-        int n = send(newsockfd_, bytes, size, 0);
-        if (n == -1)
-            closeClient();
-        return n;
+        int bytes_sent = 0;
+        while (bytes_sent < size)
+        {
+            int n = send(newsockfd_, bytes + bytes_sent, size - bytes_sent, 0);
+            if (n == -1) // client disconnected
+            {
+                closeClient();
+                return false;
+            }
+            bytes_sent += n;
+        }
+        //fprintf(stderr, "sent: %i\n", bytes_sent);
+        return bytes_sent == size;
     }
 
     void TcpServer::closeServer()

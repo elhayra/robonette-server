@@ -37,16 +37,19 @@
 #include <sensor_msgs/Range.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CompressedImage.h>
+#include <geometry_msgs/Twist.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include <robonette/manager.h>
 
+
 rbnt::Manager manager;
+ros::Publisher *twist_pub;
 
 void battCB(const sensor_msgs::BatteryState::ConstPtr &msg)
 {
     int32_t batt_lvl = (int32_t)msg->percentage;
-    if (manager.isClientConnected())
-        manager.writeInfo("Battery", batt_lvl, "%");
+    //if (manager.isClientConnected())
+    //    manager.writeInfo("Battery", batt_lvl, "%");
 }
 
 void urfCB(const sensor_msgs::Range::ConstPtr &msg)
@@ -63,13 +66,13 @@ void kinectCB(const sensor_msgs::Image::ConstPtr &msg)
     //ROS_INFO("height: %i", msg->height);
     //ROS_INFO("steps: %i", msg->step);
     //ROS_INFO("bigendian: %s",(msg->is_bigendian? "true" : "false"));
-    if (manager.isClientConnected())
-        manager.writeImg("Kinect", msg);
+    //if (manager.isClientConnected())
+    //    manager.writeImg("Kinect", msg);
 }
 
 void kinectCompressedCB(const sensor_msgs::CompressedImage::ConstPtr &msg)
 {
-    ROS_INFO("encoding: %s", msg->format.c_str());
+    //ROS_INFO("encoding: %s", msg->format.c_str());
     if (manager.isClientConnected())
         manager.writeImg("Kinect", msg);
 }
@@ -95,6 +98,35 @@ void waitForClient()
     ROS_INFO("[robonette_node]: got client");
 }
 
+float last_angular = 0;
+float last_linear = 0;
+
+void onCmdValue(float value, int id)
+{
+    //fprintf(stderr, "got cmd id: %i, value: %f\n",
+    //        id,
+    //        value);
+
+    geometry_msgs::Twist twist_msg;
+    const float max_linear_vel = 1;
+    const float max_angular_vel = 1;
+
+    if (id == 20) // left/right
+    {
+        last_angular = -1 * value * max_angular_vel;
+    }
+    else if (id == 21) // fw/bw
+    {
+        last_linear = -1 * value * max_linear_vel;
+    }
+
+    twist_msg.linear.x = last_linear;
+    twist_msg.angular.z = last_angular;
+
+    twist_pub->publish(twist_msg);
+}
+
+
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "robonette_node");
@@ -105,18 +137,26 @@ int main(int argc, char** argv)
     ros::Subscriber kinect_sub = nh.subscribe("/kinect2/qhd/image_color_rect", 5, kinectCB);
     ros::Subscriber kinect_comp_sub = nh.subscribe("/kinect2/qhd/image_color_rect/compressed", 5, kinectCompressedCB);
     ros::Subscriber map_sub = nh.subscribe("/map", 5, mapCB);
+    ros::Publisher twist_local_pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 10);
+    twist_pub = &twist_local_pub;
 
     startServer();
     waitForClient();
     ros::AsyncSpinner spinner(4);
     spinner.start();
+
+    manager.subscribe(onCmdValue);
+
+
     while (ros::ok())
     {
+
         if (!manager.isClientConnected())
         {
             ROS_INFO("client disconnected");
             waitForClient();
         }
+
         ros::Duration(1).sleep();
     }
     return 0;

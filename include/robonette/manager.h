@@ -39,6 +39,7 @@
 #include <robonette/protocol/messages/map_msg.h>
 #include <robonette/protocol/messages/img_msg.h>
 #include <robonette/protocol/messages/compressed_img_msg.h>
+#include <robonette/protocol/messages/cmd_msg.h>
 #include <robonette/protocol/messages/rbnt_header.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CompressedImage.h>
@@ -48,16 +49,22 @@
 
 namespace rbnt
 {
+    typedef void (*callback_function)(float, int);
+
     class Manager
     {
     private:
         TcpServer server_;
         // prevent parallel access to tcp socket
         boost::mutex comm_mutex_;
-        bool sendBytes(const uint8_t bytes[], size_t size);
+        boost::thread *read_thread_;
+        std::vector<callback_function> cmd_cb_funcs_;
+
+        void readLoop();
 
     public:
-        ~Manager() { server_.closeServer(); }
+        Manager();
+        ~Manager();
         bool writeInfo(std::string tag,
                        int32_t data,
                        std::string units);
@@ -78,8 +85,8 @@ namespace rbnt
         void closeClient() { server_.closeClient(); }
         bool isServerOpen() { return server_.isServerOpen(); }
         bool isClientConnected() { return server_.isClientConnected(); }
-        void waitForClient() { server_.acceptClient(); }
-        void loop();
+        void waitForClient();
+        void subscribe(callback_function func) { cmd_cb_funcs_.push_back(func); }
     };
 }
 

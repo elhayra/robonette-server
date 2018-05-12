@@ -31,41 +31,32 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef ROBONETTE_SERVER_FLOAT32_CELL_H
-#define ROBONETTE_SERVER_FLOAT32_CELL_H
 
-#include <robonette/protocol/cell_types/packet_cell.h>
+#include <robonette/protocol/messages/cmd_msg.h>
 
 namespace rbnt
 {
-    class Float32Cell : public PacketCell
+    CmdMsg::CmdMsg() :  id(INDX_ID), value(INDX_VALUE){}
+
+    bool CmdMsg::toBytes(uint8_t *bytes, size_t size)
     {
-    private:
-        float value_ = 0;
-    public:
-        static const int SIZE = 4;
-        Float32Cell(int index, float value) : PacketCell(index) { setValue(value); }
-        Float32Cell(int index) : PacketCell(index) {}
+        if (SIZE != size)
+            return false;
 
-        bool fromBytes(const uint8_t bytes[], size_t size)
-        {
-            if (size < getIndex() + SIZE)
-                return false;
-            memcpy(&value_, bytes + getIndex(), SIZE);
-            return true;
-        }
+        id.toBytes(bytes);
+        value.toBytes(bytes);
 
-        void toBytes(uint8_t bytes[]) const
-        {
-            uint8_t *bytes_arr = (uint8_t *)& value_;
-            for (int i=0; i<SIZE; i++)
-                bytes[i + getIndex()] = bytes_arr[i];
-        };
+        return true;
+    }
 
-        void setValue(float value) { value_ = value; }
-        float getValue() { return value_; }
+    bool CmdMsg::fromBytes(uint8_t *bytes, size_t size)
+    {
+        if (SIZE != size)
+            return false;
 
-    };
+        id.fromBytes(bytes, size);
+        value.fromBytes(bytes, size);
+
+        return true;
+    }
 }
-
-#endif //ROBONETTE_SERVER_FLOAT32_CELL_H
